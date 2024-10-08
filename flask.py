@@ -20,7 +20,6 @@ def update_data():
     
     return jsonify({'status': 'Dados recebidos com sucesso!'})
 
-
 @app.route('/dados', methods=['GET'])
 def get_data():
     return jsonify({
@@ -29,5 +28,9 @@ def get_data():
         'cortes': cortes
     })
 
+ @app.route('/graficos')
+def index():
+    return render_template('index.html') 
+    
 if __name__ == '__main__':
     app.run(debug=True)
