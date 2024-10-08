@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos de Entradas e Cortes</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Contador de Entradas e Cortes</h1>
+    <div>
+        <p>Entradas: <span id="entradas"></span></p>
+        <p>Cortes: <span id="cortes"></span></p>
+    </div>
+
+    <canvas id="barChart" width="400" height="200"></canvas>
+
+    <canvas id="pieChart" width="400" height="200"></canvas>
+
+    <script>
+    
+        function buscarDados() {
+            fetch('/dados')
+                .then(response => response.json())
+                .then(data => {
+                    const entradas = data.entradas;
+                    const cortes = data.cortes;
+
+                    document.getElementById('entradas').textContent = entradas;
+                    document.getElementById('cortes').textContent = cortes;
+
+                    barChart.data.datasets[0].data = [entradas, cortes];
+                    barChart.update();
+
+                    pieChart.data.datasets[0].data = [cortes, entradas - cortes];
+                    pieChart.update();
+                });
+        }
+
+        
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Entradas', 'Cortes'],
+                datasets: [{
+                    label: '# de Entradas e Cortes',
+                    data: [0, 0],  
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        const ctxPie = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: ['Cortes', 'Não Cortes'],
+                datasets: [{
+                    data: [0, 0], 
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        
+        setInterval(buscarDados, 5000);
+
+        buscarDados();
+    </script>
+</body>
+</html>
